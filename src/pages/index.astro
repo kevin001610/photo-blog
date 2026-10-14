@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CldImage from '../components/CldImage.astro';
+import { url } from '../lib/paths';
+
+const posts = (await getCollection('posts')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const fmt = new Intl.DateTimeFormat('zh-TW', { dateStyle: 'medium', timeZone: 'Asia/Taipei' });
+---
+<Base>
+  <section class="post-grid">
+    {posts.map((p, i) => (
+      <article class:list={['post-card', { featured: p.data.featured }]}>
+        <a href={url(`posts/${p.id}/`)}>
+          {p.data.cover && (
+            <CldImage
+              src={p.data.cover}
+              alt={p.data.title}
+              sizes={p.data.featured ? '(min-width: 1120px) 1080px, 100vw' : '(min-width: 760px) 360px, 100vw'}
+              eager={i === 0}
+            />
+          )}
+          <h2>{p.data.title}</h2>
+          <div class="meta">{fmt.format(p.data.date)} · {p.data.category}</div>
+          {p.data.summary && <p>{p.data.summary}</p>}
+        </a>
+      </article>
+    ))}
+  </section>
+  {posts.length === 0 && <p>目前還沒有文章。</p>}
+</Base>

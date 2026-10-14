@@ -1,0 +1,77 @@
+/* 原型用的最小樣式；正式視覺設計在第五階段再做 */
+:root {
+  --bg: #fbfaf8;
+  --fg: #1d1d1b;
+  --muted: #6b6b66;
+  --line: #e6e3de;
+  --measure: 720px;
+  --wide: 1080px;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body { margin: 0; line-height: 1.85; font-size: 17px; }
+
+a { color: inherit; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+.site-header,
+.site-footer,
+main {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+
+.site-title { font-size: 1.25rem; font-weight: 600; text-decoration: none; letter-spacing: 0.04em; }
+.site-header nav a { text-decoration: none; color: var(--muted); margin-left: 1.2em; }
+
+.site-footer { color: var(--muted); font-size: 0.85rem; padding-top: 64px; padding-bottom: 40px; }
+
+/* 文章列表 */
+.post-grid {
+  display: grid;
+  gap: 48px 32px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+.post-card a { text-decoration: none; }
+.post-card img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: var(--line); }
+.post-card h2 { font-size: 1.15rem; margin: 14px 0 4px; line-height: 1.5; }
+.meta { color: var(--muted); font-size: 0.85rem; }
+.post-card p { margin: 6px 0 0; color: var(--muted); font-size: 0.95rem; }
+.post-card.featured { grid-column: 1 / -1; }
+.post-card.featured img { aspect-ratio: 21 / 9; }
+
+/* 文章頁 */
+.post-head { max-width: var(--measure); margin: 24px auto 40px; }
+.post-head h1 { font-size: 2rem; line-height: 1.4; margin: 0 0 8px; }
+.post-body > * { max-width: var(--measure); margin-left: auto; margin-right: auto; }
+.post-body .wide { max-width: var(--wide); }
+.block-text p { margin: 0 0 1.2em; }
+figure { margin: 40px auto; }
+figcaption { color: var(--muted); font-size: 0.85rem; text-align: center; margin-top: 10px; }
+.gallery { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .post-head h1 { font-size: 1.6rem; }
+  .gallery { grid-template-columns: repeat(2, 1fr); }
+}

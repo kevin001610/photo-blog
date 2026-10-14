@@ -1,0 +1,140 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
+# ── 需要替換的值（共 5 處）──────────────────────────────────────
+#   kevin001610 / photo-blog   → GitHub 帳號與 repo 名稱
+#   YOUR_WORKER_URL                → Cloudflare Workers 上 sveltia-cms-auth 的網址
+#   YOUR_CLOUD_NAME / YOUR_API_KEY → Cloudinary 主控台的 Cloud name 與 API Key（都是公開資訊）
+# 絕對不要把 Cloudinary API Secret 或 GitHub client secret 寫進這個檔案。
+# ─────────────────────────────────────────────────────────────
+
+backend:
+  name: github
+  repo: kevin001610/photo-blog
+  branch: main
+  # base_url: YOUR_WORKER_URL   # 之後部署 Cloudflare 登入代理再打開；在此之前用「Sign In with Token」登入
+
+# 草稿 → 審閱 → 發布 三階段；草稿存在獨立分支與 PR，發布時才合併到 main 觸發部署
+publish_mode: editorial_workflow
+
+site_url: https://kevin001610.github.io/photo-blog/
+display_url: https://kevin001610.github.io/photo-blog/
+
+# 內建（Git repo）媒體儲存的路徑；各圖片欄位已用 default: false 關閉，避免照片進 repo
+media_folder: public/uploads
+public_folder: /uploads
+
+media_libraries:
+  cloudinary:
+    config:
+      cloud_name: YOUR_CLOUD_NAME
+      api_key: 'YOUR_API_KEY'
+      folder:
+        path: blog
+    # 存完整的原圖網址，CMS 才能顯示縮圖；轉換參數由 Astro 在建置時加上
+    output_filename_only: false
+    use_transformations: false
+
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    folder: src/content/posts
+    extension: yml
+    format: yaml
+    create: true
+    delete: true
+    # 用時間當檔名與網址，避免中文標題轉成難讀的網址
+    slug: '{{year}}-{{month}}-{{day}}-{{hour}}{{minute}}{{second}}'
+    identifier_field: title
+    summary: '{{title}}（{{category}}）'
+    sortable_fields: [date, title, category]
+    preview_path: posts/{{slug}}/
+    fields:
+      - name: title
+        label: 標題
+        widget: string
+
+      - name: date
+        label: 日期
+        widget: datetime
+
+      - name: category
+        label: 分類
+        widget: select
+        options: [生活, 攝影, 旅行, 研究]
+
+      - name: cover
+        label: 封面照片
+        widget: image
+        required: false
+        hint: 顯示在首頁與分享連結的預覽圖
+        media_libraries:
+          default: false
+
+      - name: summary
+        label: 摘要
+        widget: text
+        required: false
+        hint: 顯示在首頁文章卡片上，可以留白
+
+      - name: featured
+        label: 精選（在首頁以大圖顯示）
+        widget: boolean
+        required: false
+        default: false
+
+      - name: blocks
+        label: 內容
+        label_singular: 區塊
+        widget: list
+        collapsed: auto
+        thumbnail: src
+        hint: 依序加入「文字」「單張照片」「相簿」區塊，可用上下移動調整順序
+        types:
+          - name: text
+            label: 文字
+            fields:
+              - name: body
+                label: 文字
+                widget: richtext
+                modes: [rich_text]
+                buttons: [bold, italic, link, heading-two, heading-three, bulleted-list, numbered-list, quote]
+                editor_components: [hr]
+
+          - name: photo
+            label: 單張照片
+            summary: '{{caption}}'
+            fields:
+              - name: src
+                label: 照片
+                widget: image
+                media_libraries:
+                  default: false
+              - name: caption
+                label: 說明文字
+                widget: string
+                required: false
+              - name: wide
+                label: 滿版顯示
+                widget: boolean
+                required: false
+                default: false
+
+          - name: gallery
+            label: 相簿（一次選多張）
+            summary: '{{caption}}'
+            fields:
+              - name: images
+                label: 照片
+                widget: image
+                multiple: true
+                max: 40
+                media_libraries:
+                  default: false
+              - name: caption
+                label: 說明文字
+                widget: string
+                required: false

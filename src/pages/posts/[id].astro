@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import { marked } from 'marked';
+import Base from '../../layouts/Base.astro';
+import CldImage from '../../components/CldImage.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { title, date, category, cover, summary, blocks } = post.data;
+const fmt = new Intl.DateTimeFormat('zh-TW', { dateStyle: 'long', timeZone: 'Asia/Taipei' });
+
+// breaks: true → 管理者在編輯器按 Enter 換行，網頁上也換行
+const md = (s: string) => marked.parse(s, { async: false, breaks: true }) as string;
+---
+<Base title={title} description={summary} image={cover}>
+  <article>
+    <header class="post-head">
+      <h1>{title}</h1>
+      <div class="meta">{fmt.format(date)} · {category}</div>
+    </header>
+
+    <div class="post-body">
+      {blocks.map((b, i) => {
+        if (b.type === 'text') {
+          return <div class="block-text" set:html={md(b.body)} />;
+        }
+        if (b.type === 'photo') {
+          return (
+            <figure class:list={{ wide: b.wide }}>
+              <CldImage
+                src={b.src}
+                alt={b.caption ?? ''}
+                sizes={b.wide ? '(min-width: 1120px) 1080px, 100vw' : '(min-width: 760px) 720px, 100vw'}
+                eager={i === 0}
+              />
+              {b.caption && <figcaption>{b.caption}</figcaption>}
+            </figure>
+          );
+        }
+        return (
+          <figure class="wide">
+            <div class="gallery">
+              {b.images.map((src) => (
+                <CldImage src={src} sizes="(min-width: 1120px) 360px, 50vw" />
+              ))}
+            </div>
+            {b.caption && <figcaption>{b.caption}</figcaption>}
+          </figure>
+        );
+      })}
+    </div>
+  </article>
+</Base>

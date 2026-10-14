@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/paths';
+---
+<Base title="找不到頁面">
+  <section class="post-head">
+    <h1>找不到這個頁面</h1>
+    <p>網址可能已變更，或文章已被移除。<a href={url()}>回到首頁</a></p>
+  </section>
+</Base>

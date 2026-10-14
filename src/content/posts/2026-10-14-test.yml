@@ -1,0 +1,30 @@
+# 測試用文章：使用 Cloudinary 官方公開的 demo 圖片，確認渲染流程後可在後台刪除
+title: 測試文章：文字與照片交錯
+date: 2026-10-14T10:00:00.000Z
+category: 生活
+featured: true
+cover: https://res.cloudinary.com/demo/image/upload/sample.jpg
+summary: 用來驗證區塊式文章模型與 Cloudinary 響應式圖片的測試文章。
+blocks:
+  - type: text
+    body: |-
+      這是第一段文字。**粗體**與[連結](https://example.com)都應該正常顯示。
+      這一行是直接按 Enter 換行的結果。
+
+      空一行則是新段落。
+  - type: photo
+    src: https://res.cloudinary.com/demo/image/upload/sample.jpg
+    caption: 一般寬度的單張照片
+  - type: text
+    body: 照片之後的另一段文字。
+  - type: photo
+    src: https://res.cloudinary.com/demo/image/upload/sample.jpg
+    caption: 滿版寬度的單張照片
+    wide: true
+  - type: gallery
+    images:
+      - https://res.cloudinary.com/demo/image/upload/sample.jpg
+      - https://res.cloudinary.com/demo/image/upload/sample.jpg
+      - https://res.cloudinary.com/demo/image/upload/sample.jpg
+      - https://res.cloudinary.com/demo/image/upload/sample.jpg
+    caption: 相簿區塊（一次選多張）

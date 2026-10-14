@@ -1,0 +1,28 @@
+---
+import { cldUrl, cldSrcset, isCloudinary, WIDTHS } from '../lib/cloudinary';
+
+interface Props {
+  src: string;
+  alt?: string;
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const { src, alt = '', sizes = '(min-width: 760px) 720px, 100vw', eager = false, class: cls } = Astro.props;
+const cld = isCloudinary(src);
+---
+{cld ? (
+  <img
+    src={cldUrl(src, 1200)}
+    srcset={cldSrcset(src, WIDTHS)}
+    sizes={sizes}
+    alt={alt}
+    class={cls}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+    fetchpriority={eager ? 'high' : undefined}
+  />
+) : (
+  <img src={src} alt={alt} class={cls} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+)}
